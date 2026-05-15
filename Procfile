@@ -1,0 +1,1 @@
+web: python mosip_proxy.py
