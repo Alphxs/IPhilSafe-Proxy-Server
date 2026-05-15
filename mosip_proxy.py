@@ -1,3 +1,23 @@
 import os
-port = int(os.environ.get("PORT", 5050))
-app.run(host="0.0.0.0", port=port)
+import requests
+import warnings
+from flask import Flask, request, jsonify
+
+warnings.filterwarnings("ignore")  # suppress InsecureRequestWarning
+
+app = Flask(__name__)
+
+MOCK_URL = "https://cs145-iot-cup-1745973870.ap-southeast-1.elb.amazonaws.com"
+
+@app.route("/api/v1/auth/<path:endpoint>", methods=["POST"])
+def proxy(endpoint):
+    resp = requests.post(
+        f"{MOCK_URL}/api/v1/auth/{endpoint}",
+        json=request.get_json(),
+        verify=False,
+    )
+    return jsonify(resp.json()), resp.status_code
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5050))
+    app.run(host="0.0.0.0", port=port)
