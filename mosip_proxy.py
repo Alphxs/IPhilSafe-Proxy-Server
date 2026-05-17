@@ -16,7 +16,16 @@ def proxy(endpoint):
         json=request.get_json(),
         verify=False,
     )
-    return jsonify(resp.json()), resp.status_code
+    print(f"Mock server status: {resp.status_code}")
+    print(f"Mock server body: {repr(resp.text)}")
+    
+    if not resp.text.strip():
+        return jsonify({"error": "Mock server returned empty response", "status_code": resp.status_code}), 502
+    
+    try:
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e), "raw": resp.text}), 502
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5050))
