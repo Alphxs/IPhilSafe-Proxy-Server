@@ -1,1 +1,1 @@
-web: python mosip_proxy.py
+web: gunicorn mosip_proxy:app
