@@ -14,14 +14,15 @@ def proxy(endpoint):
     resp = requests.post(
         f"{MOCK_URL}/api/v1/auth/{endpoint}",
         json=request.get_json(),
+        headers={"Content-Type": "application/json"},
         verify=False,
     )
     print(f"Mock server status: {resp.status_code}")
     print(f"Mock server body: {repr(resp.text)}")
-    
+
     if not resp.text.strip():
-        return jsonify({"error": "Mock server returned empty response", "status_code": resp.status_code}), 502
-    
+        return jsonify({"error": "Mock server returned empty response"}), 502
+
     try:
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
